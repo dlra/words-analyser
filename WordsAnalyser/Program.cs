@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Linq;
 using WordsAnalyser.Services;
 
@@ -11,8 +12,14 @@ namespace WordsAnalyser
         static async Task Main(string[] args)
         {
             var text = await TextService.GetText();
-            var list = WordOccurenceProcessor.ConstructDictionary(text).ToList();
 
+            if (text.Length == 0)
+            {
+                Console.WriteLine("No text loaded");
+                return;
+            }
+
+            var list = WordOccurenceProcessor.ConstructDictionary(text).ToList();
             list.Sort((a, b) => b.Value.CompareTo(a.Value));
 
             PrintingService.PrintPopularWordsToConsole(list, COUNT);

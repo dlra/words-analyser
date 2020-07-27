@@ -11,8 +11,19 @@ namespace WordsAnalyser.Services
         internal static async Task<string> GetText()
         {
             var client = new HttpClient();
-            var webPage = await client.GetStringAsync(URL);
-            var text = webPage
+            string webPage;
+            
+            try
+            {
+                webPage = await client.GetStringAsync(URL);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return string.Empty;
+            }
+
+            var text = webPage?
                 .Split(new[] { "<pre>", "</pre>" }, StringSplitOptions.RemoveEmptyEntries)[1];
             
             return text;
