@@ -1,26 +1,33 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
+using WordsAnalyser.Utilities;
 
 namespace WordsAnalyser.Services
 {
-    static class WordOccurenceProcessor
+    internal class WordOccurenceProcessor : IWordOccurenceProcessor
     {
-        const string PATTERN = "\\w+";
+        string text;
 
-        internal static Dictionary<string, int> ConstructDictionary(string text)
+        internal WordOccurenceProcessor(string text)
         {
-            var matches = Regex.Matches(text, PATTERN);
+            this.text = text;
+        }
+
+        public Dictionary<string, int> ConstructDictionary()
+        {
+            var regexProcessor = new RegexProcessor(text, Constant.REGEX_WORDS);
             var wordsOccurencesDictionary = new Dictionary<string, int>();
 
-            foreach (Match match in matches)
+            foreach (var match in regexProcessor.GetMatches())
             {
-                if (wordsOccurencesDictionary.ContainsKey(match.Value))
+                if (wordsOccurencesDictionary.ContainsKey(match))
                 {
-                    wordsOccurencesDictionary[match.Value]++;
+                    wordsOccurencesDictionary[match]++;
                 }
                 else
                 {
-                    wordsOccurencesDictionary.Add(match.Value, 1);
+                    wordsOccurencesDictionary.Add(match, 1);
                 }
             }
 

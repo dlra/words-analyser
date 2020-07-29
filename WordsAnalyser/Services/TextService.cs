@@ -1,21 +1,27 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Net.Http;
+using WordsAnalyser.Utilities;
 
 namespace WordsAnalyser.Services
 {
-    static class TextService
+    internal class TextService : ITextService
     {
-        const string URL = "https://archive.org/stream/LordOfTheRingsApocalypticProphecies/Lord%20of%20the%20Rings%20Apocalyptic%20Prophecies_djvu.txt";
+        string url;
 
-        internal static async Task<string> GetText()
+        internal TextService(string url)
+        {
+            this.url = url;
+        }
+
+        public async Task<string> GetText()
         {
             var client = new HttpClient();
             string webPage;
             
             try
             {
-                webPage = await client.GetStringAsync(URL);
+                webPage = await client.GetStringAsync(url);
             }
             catch (Exception ex)
             {
@@ -23,8 +29,7 @@ namespace WordsAnalyser.Services
                 return string.Empty;
             }
 
-            var text = webPage?
-                .Split(new[] { "<pre>", "</pre>" }, StringSplitOptions.RemoveEmptyEntries)[1];
+            var text = webPage?.ExtractInnerHtmlFromUniqueElement("pre");
             
             return text;
         }
